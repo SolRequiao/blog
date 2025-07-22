@@ -1,0 +1,7 @@
+CREATE DATABASE IF NOT EXISTS database_name CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+CREATE USER 'user'@'%' IDENTIFIED BY 'password' WITH MAX_USER_CONNECTIONS 32;
+
+GRANT ALL PRIVILEGES ON database_name.* TO 'user'@'%';
+
+FLUSH PRIVILEGES;

@@ -1,0 +1,15 @@
+<%- include ('partials/head.ejs') %>
+<%- include ('partials/navbar.ejs') %>
+        
+    <h1>teste</h1>
+
+        <% if (msgError) { %>
+            <div class="alert alert-danger" role="alert">
+                <p>
+                    <%= msgError %>
+                </p>
+            </div>
+            <% } %>
+
+
+<%- include ('partials/footer.ejs') %>
