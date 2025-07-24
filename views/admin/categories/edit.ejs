@@ -1,0 +1,35 @@
+<%- include ('../../partials/head.ejs') %>
+
+<%- include ('../../partials/navbar.ejs') %>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="card-header text-center">
+                <h2>Edit Category:
+                    <%= category.title %>
+                </h2>
+                <% if(msgError) { %>
+                    <div class="alert alert-danger">
+                        <p>
+                            <%= msgError %>
+                        </p>
+                    </div>
+                <% } %>
+            </div>
+            <div class="card-body">
+                <form action="/category/edit" method="POST" class="form-control">
+                    <div class="mb-3">
+                        <input type="hidden" name="id" value="<%= category.id %>">
+                        <label for="" class="form-label">Title</label>
+                        <input type="text" value="<%= category.title %>" name="title" class="form-control">
+                    </div>
+                    <div>
+                        <button class="btn btn-success">Save</button>
+                        <a href="/admin/categories" class="btn btn-secondary">Back</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+<%- include ('../../partials/footer.ejs') %>

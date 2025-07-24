@@ -1,0 +1,31 @@
+<%- include ('../../partials/head.ejs') %>
+<%- include ('../../partials/navbar.ejs') %>
+
+<body>
+            <div class="container" style="padding-top: 3%;">
+                <div class="card">
+                    <div class="card-header text-center">
+                        <h2>Category Registration</h2>
+                        <% if (msgError) { %>
+                            <div class="alert alert-danger" role="alert">
+                                <p>
+                                    <%= msgError %>
+                                </p>
+                            </div>
+                            <% } %>
+                    </div>
+                    <div class="card-body">
+                                <form action="/category/save" method="post" class="form-control">
+                                    <div class="mb-3">
+                                        <label for="" class="form-label">Category</label>
+                                        <input type="text" name="title" class="form-control"
+                                            placeholder="Insert Category here!">
+                                    </div>
+                                    <button type="submit" class="btn btn-success">Send</button>
+                                </form>
+                    </div>
+                </div>
+            </div>
+</body>
+
+<%- include ('../../partials/footer.ejs') %>

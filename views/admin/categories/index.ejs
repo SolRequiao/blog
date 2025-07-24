@@ -1,0 +1,61 @@
+<%- include ('../../partials/head.ejs') %>
+<%- include ('../../partials/navbar.ejs') %>
+
+<body>
+    <div class="container">
+
+
+            <div class="container mt-3 mb-5">
+                <div class="container">
+                    <h1>Categories</h1>
+                </div>
+                <% if(msgError) { %>
+                    <div class="alert alert-danger" role="alert"></div>
+                    <p>
+                        <%= msgError %>
+                    </p>
+                <% } %>
+                <div class="container">
+
+                    <a href="/admin/categories/new" class="btn btn-primary">Register new Category</a>
+                </div>
+            </div>
+
+
+            <table class="table table-bordered">
+                <thead>
+                    <tr class="text-center">
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>Slug</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if(!msgError) { %>
+
+                    <% categories.forEach(categories=> { %>
+                        <tr>
+                            <th class="text-center">
+                                <%= categories.id %>
+                            </th>
+                            <th>
+                                <%= categories.title %>
+                            </th>
+                            <th>
+                                <%= categories.slug %>
+                            </th>
+                            <th class="text-center">
+                                <a href="/admin/categories/info/<%= categories.id %>" class="btn btn-info">Info</a>
+                                <a href="/admin/categories/edit/<%= categories.id %>" class="btn btn-warning">Edit</a>
+                                <a href="/admin/categories/delete/<%= categories.id %>" class="btn btn-danger">Delete</a>
+                            </th>
+                        </tr>
+                        <% }) %>
+                        <% } %>
+                </tbody>
+            </table>
+        </div>
+</body>
+
+<%- include ('../../partials/footer.ejs') %>
