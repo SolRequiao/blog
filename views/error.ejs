@@ -1,0 +1,18 @@
+<%- include ('partials/head.ejs') %>
+<%- include ('partials/navbar.ejs') %>
+<body>
+    <div class="container text-center">
+
+        <h1 class="mb-5 mt-5">Error mensage:</h1>
+
+        <% if (msgError) { %>
+            <div class="alert alert-danger" role="alert">
+                <h3>
+                    <%= msgError %>
+                </h3>
+            </div>
+            <% } %>
+
+    </div>
+</body>
+<%- include ('partials/footer.ejs') %>
