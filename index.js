@@ -36,10 +36,16 @@ app.get('/', (req, res) => {
     res.render('index' ,
         {
             page_title : 'Home',
-            msgError: req.query.msgError
         });
 });
 
+app.get('/error', (req, res) => {
+    res.render('error',
+        {
+            page_title: 'Error',
+            msgError: req.query.msgError
+        });
+});
 
 app.use('/', categoriesController);
 
