@@ -3,6 +3,7 @@ const router = express.Router();
 const Category = require('../categories/Category');
 const Article = require('./Article');
 const slugify = require('slugify');
+const { where } = require('sequelize');
 
 router.get('/admin/articles/new', (req, res) => {
     Category.findAll({}).then(categories => {
@@ -38,7 +39,7 @@ router.post('/article/save', (req, res) => {
     Article.create({
         title: title,
         slug: slugify(title, {
-            lower: true 
+            lower: true
         }),
         body: body,
         published: publiushed,
@@ -50,5 +51,27 @@ router.post('/article/save', (req, res) => {
         res.redirect(`/error?msgError=${encodeURIComponent('Error saving Article!')}`);
     });
 });
+
+router.get('/admin/articles', (req, res) => {
+    Article.findAll({
+        order: [['id', 'DESC']],
+    }).then(articles => {
+        Category.findAll({}).then(categories => {
+            res.render('admin/articles', {
+                page_title: 'Articles',
+                articles: articles,
+                categories: categories,
+                msgError: req.query.msgError
+            });
+        }).catch(e => {
+            console.error('Error fetching categories:', e);
+            res.redirect(`/error?msgError=${encodeURIComponent('Error fetching categories!')}`);
+        });
+    }).catch(e => {
+        console.error('Error fetching articles:', e);
+        res.redirect(`/error?msgError=${encodeURIComponent('Error fetching articles!')}`);
+    });
+});
+
 
 module.exports = router;
