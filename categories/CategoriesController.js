@@ -21,7 +21,6 @@ router.get('/admin/categories', (req, res) =>{
         {
             page_title: 'Categories',
             categories: categories,
-            msgError: req.query.msgError
         })
     }).catch(e => {
         console.error('Error finding Category data:', e);

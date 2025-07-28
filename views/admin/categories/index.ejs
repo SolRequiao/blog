@@ -9,12 +9,6 @@
                 <div class="container">
                     <h1>Categories</h1>
                 </div>
-                <% if(msgError) { %>
-                    <div class="alert alert-danger" role="alert"></div>
-                    <p>
-                        <%= msgError %>
-                    </p>
-                <% } %>
                 <div class="container">
 
                     <a href="/admin/categories/new" class="btn btn-primary">Register new Category</a>
@@ -32,7 +26,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <% if(!msgError) { %>
+
 
                     <% categories.forEach(categories=> { %>
                         <tr>
@@ -51,8 +45,8 @@
                                 <a href="/admin/categories/delete/<%= categories.id %>" class="btn btn-danger">Delete</a>
                             </th>
                         </tr>
+
                         <% }) %>
-                        <% } %>
                 </tbody>
             </table>
         </div>
