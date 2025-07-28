@@ -9,12 +9,6 @@
                 <div class="container">
                     <h1>Articles</h1>
                 </div>
-                <% if(msgError) { %>
-                    <div class="alert alert-danger" role="alert"></div>
-                    <p>
-                        <%= msgError %>
-                    </p>
-                <% } %>
                 <div class="container">
 
                     <a href="/admin/articles/new" class="btn btn-primary">Register new Article</a>
@@ -34,10 +28,8 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <% if(!msgError) { %>
-                    <% articles.forEach(articles=> { %>
-                        
 
+                    <% articles.forEach(articles=> { %>
                             <tr>
                             <th class="text-center">
                                 <%= articles.id %>
@@ -49,11 +41,7 @@
                                 <%= articles.slug %>
                             </th>
                             <th>
-                                <% categories.forEach(category => { %>
-                                    <% if (category.id === articles.categoryId) { %>
-                                        <%= category.title %>
-                                    <% } %>
-                                <% }) %>
+                                <%= articles.category.title %>
                             </th>
                             <th>
                                 <%= articles.published ? 'Yes' : 'No' %>
@@ -65,7 +53,7 @@
                             </th>
                         </tr>
                     <% }) %>
-                    <% } %>
+
                 </tbody>
             </table>
         </div>
