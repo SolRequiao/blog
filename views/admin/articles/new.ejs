@@ -2,7 +2,7 @@
 <%- include ('../../partials/navbar.ejs') %>
 
 <body>
-            <div class="container" style="padding-top: 3%;">
+            <div class="container mt-5">
                 <div class="card">
                     <div class="card-header text-center">
                         <h2>Article Registration</h2>
@@ -47,27 +47,4 @@
 </body>
 
 <%- include ('../../partials/footer.ejs') %>
-
-<script src="/js/tiny/tinymce/js/tinymce/tinymce.min.js"></script>
-<script>
-    tinymce.init({
-        selector: '#article',
-        license_key: 'gpl',
-        plugins: [
-                    'advlist',
-                    'autolink',
-                    'link',
-                    'image',
-                    'lists',
-                    'preview',
-                    'searchreplace',
-                    'wordcount',
-                    'fullscreen',
-                    'insertdatetime',
-                    'media',
-                    'save',
-                    'table',
-                    'emoticons',
-                ]
-    });
-</script>
+<%- include ('../../partials/tiny.ejs') %>
