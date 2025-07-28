@@ -3,7 +3,7 @@ const router = express.Router();
 const Category = require('../categories/Category');
 const Article = require('./Article');
 const slugify = require('slugify');
-const { where } = require('sequelize');
+
 
 router.get('/admin/articles/new', (req, res) => {
     Category.findAll({}).then(categories => {
@@ -55,17 +55,15 @@ router.post('/article/save', (req, res) => {
 router.get('/admin/articles', (req, res) => {
     Article.findAll({
         order: [['id', 'DESC']],
+        include: [{ 
+            model: Category, as: 'category',
+            required: true,
+            attributes: ['id', 'title']
+        }]
     }).then(articles => {
-        Category.findAll({}).then(categories => {
-            res.render('admin/articles', {
-                page_title: 'Articles',
-                articles: articles,
-                categories: categories,
-                msgError: req.query.msgError
-            });
-        }).catch(e => {
-            console.error('Error fetching categories:', e);
-            res.redirect(`/error?msgError=${encodeURIComponent('Error fetching categories!')}`);
+        res.render('admin/articles', {
+            page_title: 'Articles',
+            articles: articles
         });
     }).catch(e => {
         console.error('Error fetching articles:', e);
