@@ -47,9 +47,9 @@
                                 <%= articles.published ? 'Yes' : 'No' %>
                             </th>
                             <th class="text-center">
-                                <a href="#" class="btn btn-info">Info</a>
-                                <a href="#" class="btn btn-warning">Edit</a>
-                                <a href="#" class="btn btn-danger">Delete</a>
+                                <a href="/admin/articles/info/<%= articles.id %>" class="btn btn-info">Info</a>
+                                <a href="/admin/articles/edit/<%= articles.id %>" class="btn btn-warning">Edit</a>
+                                <a href="/admin/articles/delete/<%= articles.id %>" class="btn btn-danger">Delete</a>
                             </th>
                         </tr>
                     <% }) %>
