@@ -1,0 +1,41 @@
+<%- include ('../../partials/head.ejs') %>
+<%- include ('../../partials/navbar.ejs') %>
+
+<body>
+    <div class="container mt-5 mb-5">
+        <h1>Details: </h1>
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title text-center">Title: <ins><%= article.title %></ins></h2>
+            </div>
+            <% if (article.published) { %>
+            <div class="card-body">
+                <textarea name="body" id="article" ><%= article.body %></textarea>
+            </div>
+            <div class="card-footer">
+                <p class="text-muted">Published on: <%= article.updatedAt.toLocaleDateString() %></p>
+                <a href="/admin/articles/" class="btn btn-secondary">Back</a>
+                <a href="/admin/articles/edit/<%= article.id %>" class="btn btn-warning">Edit</a>
+                <a href="/admin/articles/delete/<%= article.id %>" class="btn btn-danger">Delete</a>
+            </div>
+            <% } else { %>
+                <div class="card-body text-center">
+                    <h4>This article is not published yet.</h4>
+                </div>
+            <% } %>
+        </div>
+</body>
+
+<script src="/js/tiny/tinymce/js/tinymce/tinymce.min.js"></script>
+<script>
+    tinymce.init({
+        selector: '#article',
+        license_key: 'gpl',
+        readonly: true,
+        menubar: false,
+        toolbar: false,
+        statusbar: false,
+
+    });
+</script>
+<%- include ('../../partials/footer.ejs') %>

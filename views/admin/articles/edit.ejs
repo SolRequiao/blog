@@ -1,0 +1,53 @@
+<%- include ('../../partials/head.ejs') %>
+<%- include ('../../partials/navbar.ejs') %>
+
+<body>
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-header text-center">
+                <h2>Article Registration</h2>
+                <% if (msgError) { %>
+                    <div class="alert alert-danger" role="alert">
+                        <p>
+                            <%= msgError %>
+                        </p>
+                    </div>
+                    <% } %>
+            </div>
+            <div class="card-body">
+                <form action="/article/edit" method="post" class="form-control">
+                    <input type="hidden" name="id" value="<%= article.id %>">
+                    <div>
+                        <label for="" class="form-label">Category</label>
+                        <select name="categoryId" class="form-control">
+                            <% categories.forEach(category=> { %>
+                                <option value="<%= category.id %>" >
+                                    <%= category.title %>
+                                </option>
+                                <% }); %>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="" class="form-label">Article Title</label>
+                        <input type="text" name="title" class="form-control" value="<%= article.title %>"
+                            placeholder="Insert Article Title here!">
+                    </div>
+                    <div class="mb-3">
+                        <label for="" class="form-label">Article Body</label>
+                        <textarea class="form-control" name="body" placeholder="Insert Article Body here!"
+                            id="article"><%= article.body %></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <input type="checkbox" class="form-check-input" name="published" <%= article.published ? 'checked' : '' %>> 
+                        <label class="form-check-label" for="exampleCheck1">Check me out</label>
+                    </div>
+                    <button type="submit" class="btn btn-success">Send</button>
+                    <a href="/admin/articles" class="btn btn-secondary">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+
+<%- include ('../../partials/footer.ejs') %>
+<%- include ('../../partials/tiny.ejs') %>
