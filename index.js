@@ -6,6 +6,7 @@ const port = process.env.PORT;
 const conn = require('./database/database.js');
 const bodyParser = require('body-parser');
 
+
 //contorller imports
 const categoriesController = require('./categories/CategoriesController.js');
 const articlesController = require('./articles/ArticlesController.js');
@@ -32,38 +33,74 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 
-
 app.get('/error', (req, res) => {
-    res.render('error',
-        {
-            page_title: 'Error',
-            msgError: req.query.msgError
-        });
+    res.render('error', {
+        page_title: 'Error',
+        msgError: req.query.msgError || 'An unexpected error occurred.'
+    });
 });
 
 app.get('/', (req, res) => {
 
     Article.findAll({
-        include: [{
-            model: Category, as: 'category',
-            required: true,
-            attributes: ['id', 'title']
-        }],
         order: [['id', 'DESC']],
         limit: 4,
         where: {
             published: true
         }
     }).then(articles => {
-        res.render('index', {
-            page_title: 'Home',
-            articles: articles,
+        Category.findAll({
+            order: [['id', 'DESC']]
+        }).then(categories => {
+            res.render('index', {
+                page_title: 'Home',
+                articles: articles,
+                categories: categories
+            });
+        }).catch(error => {
+            console.error('Error fetching categories:', error);
+            res.redirect('/error?msgError=Failed to load categories.');
         });
     }).catch(error => {
         console.error('Error fetching articles:', error);
         res.redirect('/error?msgError=Failed to load articles.');
     });
 });
+
+app.get('/:slug', (req, res) => {
+    const { slug } = req.params;
+    Article.findOne({
+        where: {
+            slug: slug,
+            published: true
+        },
+        include: [{
+            model: Category, as: 'category',
+            required: true,
+            attributes: ['id', 'title']
+        }]
+    }).then(article => {
+        if (article) {
+            Category.findAll({
+                order: [['id', 'DESC']]
+            }).then(categories => {
+                res.render('article', {
+                    page_title: `Article: ${article.title}`,
+                    article: article,
+                    categories: categories
+                });
+            }).catch(error => {
+                console.error('Error fetching categories:', error);
+                res.redirect('/error?msgError=Failed to load categories.');
+            });
+        } else {
+            res.redirect('/error?msgError=Article not found.');
+        }
+    }).catch(error => {
+        console.error('Error fetching article:', error);
+        res.redirect('/error?msgError=Failed to load article.');
+    });
+})
 
 
 
