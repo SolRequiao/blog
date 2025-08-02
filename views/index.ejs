@@ -1,28 +1,40 @@
 <%- include ('partials/head.ejs') %>
 <%- include ('partials/homenavbar.ejs') %>
-        
-<body>
-    
-    <div class="container">
-        <h1 class="text-center mt-5">Home</h1>
-        <% articles.forEach(article => { %>
-            <div class="card mb-3">
-                <div class="card-header">
-                    <h3 class="card-title"><%= article.title %></h3>
-                </div>
-                <div class="card-body">
-                    <p><%- article.body.substring(0, 200) %>...</p>
-                </div>
-                <div class="card-footer">
-                    <p class="card-text"><small class="text-muted">Category: <%= article.category.title %></small></p>
-                    
-                    <a href="#" class="btn btn-primary">Read More</a>
-                </div>
+
+        <body>
+            <div class="container text-center mt-5 mb-5">
+                <h1>Home</h1>
             </div>
-        <% }); %>
-    </div>
+            <div class="container mt-5">
+                <div class="row g-4">
+                    <% articles.forEach(article=> { %>
+                        <div class="col-12 col-sm-6 col-md-3">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <%= article.title %>
+                                    </h5>
+                                    <hr>
+                                    <p class="card-text" id="article-body">
+                                        <%- article.body.match(/<p[^>]*>.*?<\/p>/g || []).join(' ').substring(0, 100) || '' %>
+                                    </p>
+                                    <div class="text-end">
+                                        <span class="text-muted">continue to read ...</span>
+                                </div>
+                                </div>
+                                <div class="card-footer d-flex justify-content-between align-items-center">
+                                    <a href="/<%= article.slug %>" class="btn btn-primary btn-sm">Read more</a>
+                                    <small class="text-muted">
+                                        <%= article.createdAt.toLocaleDateString() %>
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                        <% }); %>
+                </div>
+                <a href="/#" class="btn btn-success mt-4">List Articles</a>
+            </div>
+        </body>
 
-</body>
-
-
+        
 <%- include ('partials/footer.ejs') %>
