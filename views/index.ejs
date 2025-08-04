@@ -5,7 +5,8 @@
             <div class="container text-center mt-5 mb-5">
                 <h1>Home</h1>
             </div>
-            <div class="container mt-5">
+            <%if(!msgFail) { %>
+                <div class="container mt-5">
                 <div class="row g-4">
                     <% articles.forEach(article=> { %>
                         <div class="col-12 col-sm-6 col-md-3">
@@ -16,14 +17,14 @@
                                     </h5>
                                     <hr>
                                     <p class="card-text" id="article-body">
-                                        <%- article.body.match(/<p[^>]*>.*?<\/p>/g || []).join(' ').substring(0, 100) || '' %>
+                                        <%- article.body.match(/<p[^>]*>.*?<\/p>/g || []).map(p => p.replace(/<[^>]*>/g, '')).join(' ').substring(0, 100) || '' %>
                                     </p>
                                     <div class="text-end">
                                         <span class="text-muted">continue to read ...</span>
-                                </div>
+                                    </div>
                                 </div>
                                 <div class="card-footer d-flex justify-content-between align-items-center">
-                                    <a href="/<%= article.slug %>" class="btn btn-primary btn-sm">Read more</a>
+                                    <a href="/more/article/<%= article.slug %>" class="btn btn-primary btn-sm">Read more</a>
                                     <small class="text-muted">
                                         <%= article.createdAt.toLocaleDateString() %>
                                     </small>
@@ -32,9 +33,17 @@
                         </div>
                         <% }); %>
                 </div>
-                <a href="/article/more" class="btn btn-success mt-4">List Articles</a>
+                <a href="/more/articles" class="btn btn-info mt-4">More Articles</a>
             </div>
+            <% } else { %>
+            <div class="container text-center mt-5">
+                <p>
+                    <small class="text-muted">
+                        <%= msgFail %>
+                    </small>
+                </p>
+            </div>
+            <% } %>
         </body>
 
-        
 <%- include ('partials/footer.ejs') %>

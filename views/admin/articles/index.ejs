@@ -31,26 +31,26 @@
 
                     <% articles.forEach(articles=> { %>
                             <tr>
-                            <th class="text-center">
+                            <td class="text-center">
                                 <%= articles.id %>
-                            </th>
-                            <th>
-                                <%= articles.title %>
-                            </th>
-                            <th>
-                                <%= articles.slug %>
-                            </th>
-                            <th>
-                                <%= articles.category.title %>
-                            </th>
-                            <th>
+                            </td>
+                            <td>
+                                <%= articles.title.substring(0, 30) %>
+                            </td>
+                            <td>
+                                <%= articles.slug.substring(0, 30) %>
+                            </td>
+                            <td>
+                                <%= articles.category.title.substring(0, 30) %>
+                            </td>
+                            <td class="text-center">
                                 <%= articles.published ? 'Yes' : 'No' %>
-                            </th>
-                            <th class="text-center">
+                            </td>
+                            <td class="text-center">
                                 <a href="/admin/articles/info/<%= articles.id %>" class="btn btn-info">Info</a>
                                 <a href="/admin/articles/edit/<%= articles.id %>" class="btn btn-warning">Edit</a>
                                 <a href="/admin/articles/delete/<%= articles.id %>" class="btn btn-danger">Delete</a>
-                            </th>
+                            </td>
                         </tr>
                     <% }) %>
 

@@ -7,19 +7,10 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Categories
-          </a>
-          <ul class="dropdown-menu">
-            <% categories.forEach(category => { %>
-              <li><a class="dropdown-item" href="/category/<%= category.slug %>"><%= category.title %></a></li>
-            <% }); %>
-          </ul>
+        <li class="nav-item">
+          <a class="nav-link" href="/more/articles">Articles</a>
         </li>
       </ul>
-
     </div>
   </div>
 </nav>

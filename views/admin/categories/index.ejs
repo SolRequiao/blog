@@ -30,20 +30,20 @@
 
                     <% categories.forEach(categories=> { %>
                         <tr>
-                            <th class="text-center">
+                            <td class="text-center">
                                 <%= categories.id %>
-                            </th>
-                            <th>
-                                <%= categories.title %>
-                            </th>
-                            <th>
-                                <%= categories.slug %>
-                            </th>
-                            <th class="text-center">
+                            </td>
+                            <td>
+                                <%= categories.title.substring(0, 30) %>
+                            </td>
+                            <td>
+                                <%= categories.slug.substring(0, 30) %>
+                            </td>
+                            <td class="text-center">
                                 <a href="/admin/categories/info/<%= categories.id %>" class="btn btn-info">Info</a>
                                 <a href="/admin/categories/edit/<%= categories.id %>" class="btn btn-warning">Edit</a>
                                 <a href="/admin/categories/delete/<%= categories.id %>" class="btn btn-danger">Delete</a>
-                            </th>
+                            </td>
                         </tr>
 
                         <% }) %>
