@@ -1,0 +1,39 @@
+<%- include ('../partials/head.ejs') %>
+    <%- include ('../partials/homenavbar.ejs') %>
+
+        <body>
+            <div class="container">
+
+
+                <div class="container mt-3 mb-5">
+                    <div class="container">
+                        <h1>Articles</h1>
+                    </div>
+                </div>
+                <% articles.forEach(articles=> { %>
+
+                    <div class="card mb-3">
+                        <div class="card-header text-center">
+                            Category: <%= articles.category.title %>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title text-center">
+                                <%= articles.title %>
+                            </h5>
+                            <hr>
+                            <p class="card-text text-justify">
+                                <%- articles.body.match(/<p[^>]*>.*?<\/p>/g || []).join('').substring(0, 550) || '' %>...
+                            </p>
+                        </div>
+                        <div class="card-footer text-muted">
+                            <a href="/<%= articles.slug %>" class="btn btn-primary">Read More</a>
+                            <small class="text-muted float-end">
+                                Published on: <%= articles.updatedAt.toLocaleDateString() %>
+                            </small>
+                        </div>
+                    </div>
+                    <% }); %>
+            </div>
+        </body>
+
+        <%- include ('../partials/footer.ejs') %>
