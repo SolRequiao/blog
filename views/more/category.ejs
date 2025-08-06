@@ -7,12 +7,12 @@
 
                 <div class="container mt-3 mb-5">
                     <div class="container">
-                        <h1>Articles</h1>
+                        <h1>Articles about: <%= category.title %></h1>
 
 
                     </div>
                 </div>
-                <% articles.forEach(article => { %>
+                <% articles.rows.forEach(article => { %>
 
                     <div class="card mb-3">
                         <div class="card-header text-center">
@@ -35,6 +35,34 @@
                         </div>
                     </div>
                     <% }); %>
+                    <div>
+                            <nav aria-label="Page navigation example">
+                                <ul class="pagination float-end">
+                                    
+                                    <% if (next) { %>
+                                        
+                                        <li class="page-item">
+                                            
+                                            <% if (num > 0) { %>
+                                                <a class="page-link" href="/more/category/<%= category.slug %>?num=<%= parseInt(num) + 1 %>">Next</a>
+                                            <% } else { %>
+                                                <a class="page-link" href="/more/category/<%= category.slug %>?num=1">Next</a>
+                                            <% } %>
+                                        </li>
+                                    <% } else { %>
+                                        <li class="page-item disabled">
+                                            <span class="page-link">No more articles</span>
+                                        </li>
+                                    <% } %>
+                                </ul>
+                                <ul class="pagination float-start">
+                                    <% if (num > 0) { %>
+                                        <li class="page-item">
+                                            <a class="page-link" href="/more/category/<%= category.slug %>?num=<%= parseInt(num) - 1 %>">Previous</a>
+                                        </li>
+                                    <% } %>
+                                </ul>
+                            </nav>
             </div>
         </body>
 

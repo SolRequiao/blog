@@ -23,29 +23,52 @@
                         </div>
                     </div>
                 </div>
-                <% articles.forEach(articles=> { %>
+                <% articles.rows.forEach(article => { %>
 
                     <div class="card mb-3">
                         <div class="card-header text-center">
-                            Category: <%= articles.category.title %>
+                            Category: <%= article.category.title %>
                         </div>
                         <div class="card-body">
                             <h5 class="card-title text-center">
-                                <%= articles.title %>
+                                <%= article.title %>
                             </h5>
                             <hr>
                             <p class="card-text text-justify">
-                                <%- articles.body.match(/<p[^>]*>.*?<\/p>/g || []).map(p => p.replace(/<[^>]*>/g, '')).join('').substring(0, 550) || '' %>...
+                                <%- article.body.match(/<p[^>]*>.*?<\/p>/g || []).map(p => p.replace(/<[^>]*>/g, '')).join('').substring(0, 550) || '' %>...
                             </p>
                         </div>
                         <div class="card-footer text-muted">
-                            <a href="/more/article/<%= articles.slug %>" class="btn btn-primary">Read More</a>
+                            <a href="/more/article/<%= article.slug %>" class="btn btn-primary">Read More</a>
                             <small class="text-muted float-end">
-                                Published on: <%= articles.updatedAt.toLocaleDateString() %>
+                                Published on: <%= article.updatedAt.toLocaleDateString() %>
                             </small>
                         </div>
                     </div>
-                    <% }); %>
+                    
+                  <% }); %>
+                  <div>
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination float-end">
+                                <% if (next) { %>
+                                    <li class="page-item">
+                                        <a class="page-link" href="/more/articles/<%= parseInt(num) + 1 %>">Next</a>
+                                    </li>
+                                <% } else { %>
+                                    <li class="page-item disabled">
+                                        <span class="page-link">No more articles</span>
+                                    </li>
+                                <% } %>
+                            </ul>
+                            <ul class="pagination float-start">
+                                <% if (num > 0) { %>
+                                    <li class="page-item">
+                                        <a class="page-link" href="/more/articles/<%= parseInt(num) - 1 %>">Previous</a>
+                                    </li>
+                                <% } %>
+                            </ul>
+                        </nav>
+                    </div>
             </div>
         </body>
 
