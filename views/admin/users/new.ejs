@@ -1,0 +1,50 @@
+<%- include ('../../partials/head.ejs') %>
+<%- include ('../../partials/navbar.ejs') %>
+
+
+
+<body>
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-header text-center">
+                <h2>User Registration</h2>
+                <% if (msgError) { %>
+                    <div class="alert alert-danger" role="alert">
+                        <p>
+                            <%= msgError %>
+                        </p>
+                    </div>
+                    <% } %>
+            </div>
+            <div class="card-body">
+                <form action="/user/save" method="post" class="form-control">
+                    <div class="mb-3">
+                        <label for="" class="form-label">Name</label>
+                        <input type="text" name="userName" class="form-control"
+                            placeholder="Insert ser name here!">
+                    </div>
+                    <div class="mb-3">
+                        <label for="" class="form-label">E-mail</label>
+                        <input type="email" name="email" class="form-control" placeholder="Insert e-mail here!">
+                    </div>
+                    <div class="mb-3">
+                        <label for="" class="form-label">Password</label>
+                        <input type="password" name="password" class="form-control"
+                            placeholder="Insert password here!">
+                    </div>
+                    <div class="mb-3">
+                        <label for="" class="form-label">Confirm Password</label>
+                        <input type="password" name="confirmPassword" class="form-control"
+                            placeholder="Insert password here!">
+                    </div>
+                    <button type="submit" class="btn btn-success">Send</button>
+                    <a href="/" class="btn btn-secondary">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+
+
+
+        <%- include ('../../partials/footer.ejs') %>

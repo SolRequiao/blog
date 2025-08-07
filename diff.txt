@@ -1,0 +1,340 @@
+On branch master
+Your branch is up to date with 'origin/master'.
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   articles/ArticlesController.js
+	modified:   categories/CategoriesController.js
+	modified:   index.js
+	modified:   package.json
+	modified:   views/admin/articles/index.ejs
+	modified:   views/admin/categories/index.ejs
+	modified:   views/more/articles.ejs
+	modified:   views/partials/navbar.ejs
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	diff.txt
+	user/
+	views/admin/users/
+
+no changes added to commit (use "git add" and/or "git commit -a")
+diff --git a/articles/ArticlesController.js b/articles/ArticlesController.js
+index 0575637..b05c79e 100644
+--- a/articles/ArticlesController.js
++++ b/articles/ArticlesController.js
+@@ -52,8 +52,18 @@ router.post('/article/save', (req, res) => {
+     });
+ });
+ 
+-router.get('/admin/articles', (req, res) => {
+-    Article.findAll({
++router.get('/admin/articles/:num', (req, res) => {
++    let { num } = req.params;
++    let offset = 0;
++    if (isNaN(num) || num === 1) {
++        offset = 0;
++    } else {
++        offset = parseInt(num) * 20;
++    }
++    
++    Article.findAndCountAll({
++        limit: 20,
++        offset: offset,
+         order: [['id', 'DESC']],
+         include: [{
+             model: Category, as: 'category',
+@@ -61,9 +71,12 @@ router.get('/admin/articles', (req, res) => {
+             attributes: ['id', 'title']
+         }]
+     }).then(articles => {
++        let next = true ? offset + 20 < articles.count : false;
+         res.render('admin/articles', {
+             page_title: 'Articles',
+-            articles: articles
++            articles: articles,
++            num: parseInt(num),
++            next: next
+         });
+     }).catch(e => {
+         console.error('Error fetching articles:', e);
+diff --git a/categories/CategoriesController.js b/categories/CategoriesController.js
+index 80cab44..0e6c1fc 100644
+--- a/categories/CategoriesController.js
++++ b/categories/CategoriesController.js
+@@ -12,15 +12,26 @@ router.get('/admin/categories/new', (req, res) => {
+         });
+ });
+ 
+-router.get('/admin/categories', (req, res) => {
+-
+-    Category.findAll({
++router.get('/admin/categories/:num', (req, res) => {
++    let { num } = req.params
++    let offset = 0
++    if (isNaN(offset) || offset === 1) {
++        offset = 0
++    } else {
++        offset = parseInt(num) * 20
++    }
++    Category.findAndCountAll({
++        limit: 20,
++        offset: offset,
+         order: [['id', 'DESC']]
+     }).then(categories => {
++        let next = true ? offset + 20 < categories.count : false`;`
+         res.render('admin/categories',
+             {
+                 page_title: 'Categories',
+                 categories: categories,
++                next: next,
++                num: parseInt(num)
+             })
+     }).catch(e => {
+         console.error('Error finding Category data:', e);
+diff --git a/index.js b/index.js
+index d3ca8a6..2d7cd73 100644
+--- a/index.js
++++ b/index.js
+@@ -11,13 +11,12 @@ const bodyParser = require('body-parser');
+ const categoriesController = require('./categories/CategoriesController.js');
+ const articlesController = require('./articles/ArticlesController.js');
+ const moreController = require('./more/MoreController.js');
++const usersController = require('./user/UserController.js');
+ 
+ //Model imports
+-const Category = require('./categories/Category.js');
+ const Article = require('./articles/Article.js');
+ 
+ 
+-
+ conn.authenticate().then(() => {
+     console.log('Database conn OK');
+ }).catch(error => {
+@@ -64,6 +63,8 @@ app.get('/', (req, res) => {
+     });
+ });
+ 
++app.use('/', usersController)
++
+ app.use('/', categoriesController);
+ 
+ app.use('/', articlesController);
+diff --git a/package.json b/package.json
+index 63a9348..769679b 100644
+--- a/package.json
++++ b/package.json
+@@ -9,6 +9,7 @@
+   "license": "ISC",
+   "description": "",
+   "dependencies": {
++    "bcryptjs": "^3.0.2",
+     "body-parser": "^2.2.0",
+     "bootstrap": "^5.3.7",
+     "dotenv": "^17.2.0",
+diff --git a/views/admin/articles/index.ejs b/views/admin/articles/index.ejs
+index ce514a4..f3ad7b9 100644
+--- a/views/admin/articles/index.ejs
++++ b/views/admin/articles/index.ejs
+@@ -3,60 +3,75 @@
+ 
+ <body>
+     <div class="container">
+-
+-
+-            <div class="container mt-3 mb-5">
+-                <div class="container">
+-                    <h1>Articles</h1>
+-                </div>
+-                <div class="container">
+-
+-                    <a href="/admin/articles/new" class="btn btn-primary">Register new Article</a>
+-                </div>
++        <div class="container mt-3 mb-5">
++            <div class="container">
++                <h1>Articles</h1>
+             </div>
+-
+-
+-            <table class="table table-bordered">
+-                <thead>
+-                    <tr class="text-center">
+-                        <th>ID</th>
+-                        <th>Title</th>
+-                        <th>Slug</th>
+-                        <th>Category</th>
+-                        <th>Published</th>
+-                        <th>Actions</th>
++            <div class="container">
++                <a href="/admin/articles/new" class="btn btn-primary">Register new Article</a>
++            </div>
++        </div>
++        <table class="table table-bordered">
++            <thead>
++                <tr class="text-center">
++                    <th>ID</th>
++                    <th>Title</th>
++                    <th>Slug</th>
++                    <th>Category</th>
++                    <th>Published</th>
++                    <th>Actions</th>
++                </tr>
++            </thead>
++            <tbody>
++                <% articles.rows.forEach(articles=> { %>
++                    <tr>
++                        <td class="text-center">
++                            <%= articles.id %>
++                        </td>
++                        <td>
++                            <%= articles.title.substring(0, 30) %>
++                        </td>
++                        <td>
++                            <%= articles.slug.substring(0, 30) %>
++                        </td>
++                        <td>
++                            <%= articles.category.title.substring(0, 30) %>
++                        </td>
++                        <td class="text-center">
++                            <%= articles.published ? 'Yes' : 'No' %>
++                        </td>
++                        <td class="text-center">
++                            <a href="/admin/articles/info/<%= articles.id %>" class="btn btn-info">Info</a>
++                            <a href="/admin/articles/edit/<%= articles.id %>" class="btn btn-warning">Edit</a>
++                            <a href="/admin/articles/delete/<%= articles.id %>"
++                                class="btn btn-danger">Delete</a>
++                        </td>
+                     </tr>
+-                </thead>
+-                <tbody>
+-
+-                    <% articles.forEach(articles=> { %>
+-                            <tr>
+-                            <td class="text-center">
+-                                <%= articles.id %>
+-                            </td>
+-                            <td>
+-                                <%= articles.title.substring(0, 30) %>
+-                            </td>
+-                            <td>
+-                                <%= articles.slug.substring(0, 30) %>
+-                            </td>
+-                            <td>
+-                                <%= articles.category.title.substring(0, 30) %>
+-                            </td>
+-                            <td class="text-center">
+-                                <%= articles.published ? 'Yes' : 'No' %>
+-                            </td>
+-                            <td class="text-center">
+-                                <a href="/admin/articles/info/<%= articles.id %>" class="btn btn-info">Info</a>
+-                                <a href="/admin/articles/edit/<%= articles.id %>" class="btn btn-warning">Edit</a>
+-                                <a href="/admin/articles/delete/<%= articles.id %>" class="btn btn-danger">Delete</a>
+-                            </td>
+-                        </tr>
+                     <% }) %>
+-
+-                </tbody>
+-            </table>
+-        </div>
++            </tbody>
++        </table>
++        <nav aria-label="Page navigation">
++            <ul class="pagination float-end">
++                <% if (next) { %>
++                    <li class="page-item">
++                        <a class="page-link" href="/admin/articles/<%= parseInt(num) + 1 %>">Next</a>
++                    </li>
++                    <% } else { %>
++                        <li class="page-item disabled">
++                            <span class="page-link">No more articles</span>
++                        </li>
++                        <% } %>
++            </ul>
++            <ul class="pagination float-start">
++                <% if (num> 0) { %>
++                    <li class="page-item">
++                        <a class="page-link" href="/admin/articles/<%= parseInt(num) - 1 %>">Previous</a>
++                    </li>
++                    <% } %>
++            </ul>
++        </nav>
++    </div>
++    </div>
+ </body>
+ 
+ <%- include ('../../partials/footer.ejs') %>
+\ No newline at end of file
+diff --git a/views/admin/categories/index.ejs b/views/admin/categories/index.ejs
+index 77023ef..d5f5fc5 100644
+--- a/views/admin/categories/index.ejs
++++ b/views/admin/categories/index.ejs
+@@ -28,7 +28,7 @@
+                 <tbody>
+ 
+ 
+-                    <% categories.forEach(categories=> { %>
++                    <% categories.rows.forEach(categories=> { %>
+                         <tr>
+                             <td class="text-center">
+                                 <%= categories.id %>
+@@ -49,6 +49,26 @@
+                         <% }) %>
+                 </tbody>
+             </table>
++            <nav aria-label="Page navigation">
++                            <ul class="pagination float-end">
++                                <% if (next) { %>
++                                    <li class="page-item">
++                                        <a class="page-link" href="/admin/categories/<%= parseInt(num) + 1 %>">Next</a>
++                                    </li>
++                                <% } else { %>
++                                    <li class="page-item disabled">
++                                        <span class="page-link">No more articles</span>
++                                    </li>
++                                <% } %>
++                            </ul>
++                            <ul class="pagination float-start">
++                                <% if (num > 0) { %>
++                                    <li class="page-item">
++                                        <a class="page-link" href="/admin/categories/<%= parseInt(num) - 1 %>">Previous</a>
++                                    </li>
++                                <% } %>
++                            </ul>
++                        </nav>
+         </div>
+ </body>
+ 
+diff --git a/views/more/articles.ejs b/views/more/articles.ejs
+index 6fc1844..fde8c9b 100644
+--- a/views/more/articles.ejs
++++ b/views/more/articles.ejs
+@@ -48,7 +48,7 @@
+                     
+                   <% }); %>
+                   <div>
+-                        <nav aria-label="Page navigation example">
++                        <nav aria-label="Page navigation">
+                             <ul class="pagination float-end">
+                                 <% if (next) { %>
+                                     <li class="page-item">
+diff --git a/views/partials/navbar.ejs b/views/partials/navbar.ejs
+index 71ae930..91df4eb 100644
+--- a/views/partials/navbar.ejs
++++ b/views/partials/navbar.ejs
+@@ -8,10 +8,13 @@
+     <div class="collapse navbar-collapse" id="navbarSupportedContent">
+       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+         <li class="nav-item">
+-          <a class="nav-link active" aria-current="page" href="/admin/categories">Categories</a>
++          <a class="nav-link active" aria-current="page" href="/admin/categories/0">Categories</a>
+         </li>
+         <li class="nav-item">
+-          <a class="nav-link" href="/admin/articles">Articles</a>
++          <a class="nav-link" href="/admin/articles/0">Articles</a>
++        </li>
++        <li class="nav-item">
++          <a class="nav-link" href="/admin/users/0">Users</a>
+         </li>
+         <li class="nav-item dropdown">
+           <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">

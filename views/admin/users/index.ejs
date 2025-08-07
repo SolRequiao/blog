@@ -1,0 +1,75 @@
+<%- include ('../../partials/head.ejs') %>
+<%- include ('../../partials/navbar.ejs') %>
+
+
+<body>
+    <div class="container">
+        <div class="container mt-3 mb-5">
+            <div class="container">
+                <h1>Users</h1>
+            </div>
+            <div class="container">
+                <a href="/admin/users/new" class="btn btn-primary">Register new User</a>
+            </div>
+        </div>
+        <table class="table table-bordered">
+            <thead>
+                <tr class="text-center">
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>E-mail</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% user.rows.forEach(user=> { %>
+                    <tr>
+                        <td class="text-center">
+                            <%= user.id %>
+                        </td>
+                        <td>
+                            <%= user.username.substring(0, 50) %>
+                        </td>
+                        <td>
+                            <%= user.email.substring(0, 50) %>
+                        </td>
+                        <td class="text-center">
+                            <a href="/admin/user/info/<%= user.id %>" class="btn btn-info">Info</a>
+                            <a href="/admin/user/edit/<%= user.id %>" class="btn btn-warning">Edit</a>
+                            <a href="/admin/user/delete/<%= user.id %>" class="btn btn-danger">Delete</a>
+                        </td>
+                    </tr>
+                    <% }) %>
+            </tbody>
+        </table>
+        <div>
+            <nav aria-label="Page navigation example">
+                <ul class="pagination float-end">
+                    <% if (next) { %>
+                        <li class="page-item">
+                            <% if (num> 0) { %>
+                                <a class="page-link" href="/admin/users/<%= parseInt(num) + 1 %>">Next</a>
+                                <% } else { %>
+                                    <a class="page-link" href="/admin/users/<%= parseInt(num) + 1 %>">Next</a>
+                                    <% } %>
+                        </li>
+                        <% } else { %>
+                            <li class="page-item disabled">
+                                <span class="page-link">No more Users</span>
+                            </li>
+                            <% } %>
+                </ul>
+                <ul class="pagination float-start">
+                    <% if (num> 0) { %>
+                        <li class="page-item">
+                            <a class="page-link" href="/admin/users/<%= parseInt(num) - 1 %>">Previous</a>
+                        </li>
+                        <% } %>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</body>
+
+
+<%- include ('../../partials/footer.ejs') %>
