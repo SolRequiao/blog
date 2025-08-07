@@ -11,11 +11,10 @@ const bodyParser = require('body-parser');
 const categoriesController = require('./categories/CategoriesController.js');
 const articlesController = require('./articles/ArticlesController.js');
 const moreController = require('./more/MoreController.js');
+const usersController = require('./user/UserController.js');
 
 //Model imports
-const Category = require('./categories/Category.js');
 const Article = require('./articles/Article.js');
-
 
 
 conn.authenticate().then(() => {
@@ -63,6 +62,8 @@ app.get('/', (req, res) => {
         });
     });
 });
+
+app.use('/', usersController)
 
 app.use('/', categoriesController);
 

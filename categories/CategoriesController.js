@@ -12,15 +12,26 @@ router.get('/admin/categories/new', (req, res) => {
         });
 });
 
-router.get('/admin/categories', (req, res) => {
-
-    Category.findAll({
+router.get('/admin/categories/:num', (req, res) => {
+    let { num } = req.params
+    let offset = 0
+    if (isNaN(offset) || offset === 1) {
+        offset = 0
+    } else {
+        offset = parseInt(num) * 20
+    }
+    Category.findAndCountAll({
+        limit: 20,
+        offset: offset,
         order: [['id', 'DESC']]
     }).then(categories => {
+        let next = true ? offset + 20 < categories.count : false`;`
         res.render('admin/categories',
             {
                 page_title: 'Categories',
                 categories: categories,
+                next: next,
+                num: parseInt(num)
             })
     }).catch(e => {
         console.error('Error finding Category data:', e);

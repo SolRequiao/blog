@@ -52,8 +52,18 @@ router.post('/article/save', (req, res) => {
     });
 });
 
-router.get('/admin/articles', (req, res) => {
-    Article.findAll({
+router.get('/admin/articles/:num', (req, res) => {
+    let { num } = req.params;
+    let offset = 0;
+    if (isNaN(num) || num === 1) {
+        offset = 0;
+    } else {
+        offset = parseInt(num) * 20;
+    }
+    
+    Article.findAndCountAll({
+        limit: 20,
+        offset: offset,
         order: [['id', 'DESC']],
         include: [{
             model: Category, as: 'category',
@@ -61,9 +71,12 @@ router.get('/admin/articles', (req, res) => {
             attributes: ['id', 'title']
         }]
     }).then(articles => {
+        let next = true ? offset + 20 < articles.count : false;
         res.render('admin/articles', {
             page_title: 'Articles',
-            articles: articles
+            articles: articles,
+            num: parseInt(num),
+            next: next
         });
     }).catch(e => {
         console.error('Error fetching articles:', e);
