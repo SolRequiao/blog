@@ -4,12 +4,17 @@ const Category = require('./Category');
 const slugify = require('slugify');
 const Article = require('../articles/Article');
 
+
 router.get('/admin/categories/new', (req, res) => {
-    res.render('admin/categories/new',
-        {
-            page_title: 'New Category',
-            msgError: req.query.msgError
-        });
+    let errors = [];
+    if (req.query.state) {
+        const { errors: e = [] } = JSON.parse(req.query.state);
+        errors = e;
+    }
+    res.render('admin/categories/new', {
+        page_title: 'New Category',
+        errors
+    });
 });
 
 router.get('/admin/categories/:num', (req, res) => {
@@ -25,7 +30,7 @@ router.get('/admin/categories/:num', (req, res) => {
         offset: offset,
         order: [['id', 'DESC']]
     }).then(categories => {
-        let next = true ? offset + 20 < categories.count : false`;`
+        let next = true ? offset + 20 < categories.count : false;
         res.render('admin/categories',
             {
                 page_title: 'Categories',
@@ -41,28 +46,31 @@ router.get('/admin/categories/:num', (req, res) => {
 
 router.post('/category/save', (req, res) => {
     const { title } = req.body;
-    if (!title) {
-        return res.redirect(`/admin/categories/new?msgError=${encodeURIComponent('The title field must not be blank')}`);
-    }
     Category.create({
-        title: title,
-        slug: slugify(title, {
-            lower: true
-        })
-    }).then(() => {
-        res.redirect('/admin/categories');
-    }).catch(e => {
+        title,
+        slug: slugify(title, { lower: true })
+    })
+    .then(() => {
+        res.redirect('/admin/categories/0');
+    })
+    .catch(e => {
+        if (e.name === 'SequelizeValidationError' || e.name === 'SequelizeUniqueConstraintError') {
+            const errors = e.errors.map(x => ({
+                field: x.path,
+                rule: x.validatorKey,
+                message: x.message
+            }));
+            const msgError = { errors, formData: { title } };
+            const state = encodeURIComponent(JSON.stringify(msgError));
+            return res.redirect(`/admin/categories/new?state=${state}`);
+        }
         console.error('Error saving Category:', e);
         res.redirect(`/error?msgError=${encodeURIComponent('Error saving Category!')}`);
     });
 });
 
-
-
 router.get('/admin/categories/delete/:id', (req, res) => {
-
     const { id } = req.params;
-
     Category.findOne({
         where: {
             id: id
@@ -71,17 +79,15 @@ router.get('/admin/categories/delete/:id', (req, res) => {
         if (id != category.id) {
             return res.redirect(`/error?msgError=${encodeURIComponent('Error finding Category data')}`);
         }
-        res.render('admin/categories/delete',
-            {
-                page_title: 'Delete Category',
-                category: category,
-                msgError: req.query.msgError
-            });
+        res.render('admin/categories/delete', {
+            page_title: 'Delete Category',
+            category: category,
+            msgError: req.query.msgError
+        });
     }).catch(e => {
         console.error('Error finding category data:', e);
         res.redirect(`/error?msgError=${encodeURIComponent('Error finding category data')}`);
     });
-
 });
 
 router.post('/category/delete', (req, res) => {
@@ -91,7 +97,7 @@ router.post('/category/delete', (req, res) => {
             return res.redirect(`/admin/categories/delete/${id}?msgError=${encodeURIComponent('This category cannot be deleted because it has articles associated with it')}`);
         }
         Category.destroy({ where: { id } }).then(() => {
-            res.redirect('/admin/categories');
+            res.redirect('/admin/categories/0');
         }).catch(e => {
             console.error('Error deleting Category data:', e);
             res.redirect(`/error?msgError=${encodeURIComponent('Error deleting Category data')}`);
@@ -104,7 +110,7 @@ router.post('/category/delete', (req, res) => {
 
 router.get('/admin/categories/edit/:id', (req, res) => {
     const { id } = req.params;
-
+    let errors = [];
     Category.findOne({
         where: {
             id: id
@@ -113,11 +119,15 @@ router.get('/admin/categories/edit/:id', (req, res) => {
         if (id != category.id) {
             return res.redirect(`/error?msgError=${encodeURIComponent('Error finding Category data')}`);
         }
+        if (req.query.state) {
+            const { errors: e = [] } = JSON.parse(req.query.state);
+            errors = e;
+        }
         res.render('admin/categories/edit',
             {
                 page_title: 'Edit Category',
                 category: category,
-                msgError: req.query.msgError
+                errors
             });
     }).catch(e => {
         console.error('Error finding Category data:', e);
@@ -127,11 +137,6 @@ router.get('/admin/categories/edit/:id', (req, res) => {
 
 router.post('/category/edit', (req, res) => {
     const { id, title } = req.body;
-
-    if (!title) {
-        return res.redirect(`/admin/categories/edit/${id}?msgError=${encodeURIComponent('The title field must not be blank')}`)
-    }
-
     Category.update({
         title: title,
         slug: slugify(title, {
@@ -142,17 +147,26 @@ router.post('/category/edit', (req, res) => {
             where: {
                 id: id
             }
-        }).then(() => {
-            res.redirect('/admin/categories');
-        }).catch(e => {
-            console.error('Erro ->', e);
-            res.redirect(`/error?msgError=${encodeURIComponent('Error saving category')}`)
-        });
+    }).then(() => {
+        res.redirect('/admin/categories/0');
+    }).catch(e => {
+        if (e.name === 'SequelizeValidationError' || e.name === 'SequelizeUniqueConstraintError') {
+        const errors = e.errors.map(x => ({
+            field: x.path,
+            rule: x.validatorKey,
+            message: x.message
+        }));
+        const msgError = { errors, formData: { title, id } };
+        const state = encodeURIComponent(JSON.stringify(msgError));
+        return res.redirect(`/admin/categories/edit/${id}?state=${state}`);
+    }
+    console.error('Error saving Category:', e);
+    res.redirect(`/error?msgError=${encodeURIComponent('Error saving Category!')}`);
+    });
 });
 
 router.get('/admin/categories/info/:id', (req, res) => {
     const { id } = req.params;
-
     Category.findOne({
         where: {
             id: id

@@ -1,10 +1,16 @@
-const Sequelize = require('sequelize');
-const conn  = require('../database/database.js');
+const { DataTypes, Sequelize } = require('sequelize');
+const conn = require('../database/database.js');
 
 const Category = conn.define('categories', {
     title: {
-        type: Sequelize.STRING,
-        allowNull: false
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+            len: {
+                args: [2, 200],
+                msg: 'The title must be between 2 and 200 characters'
+            }
+        }
     }, slug: {
         type: Sequelize.STRING,
         allowNull: false
