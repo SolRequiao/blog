@@ -6,11 +6,16 @@ const slugify = require('slugify');
 
 
 router.get('/admin/articles/new', (req, res) => {
+    let errors = [];
+    if (req.query.state) {
+        const { errors: e = [] } = JSON.parse(req.query.state);
+        errors = e;
+    }
     Category.findAll({}).then(categories => {
         res.render('admin/articles/new', {
             page_title: 'New Article',
             categories: categories,
-            msgError: req.query.msgError
+            errors
         });
     }).catch(e => {
         console.error('Error fetching categories for new article:', e);
@@ -20,21 +25,10 @@ router.get('/admin/articles/new', (req, res) => {
 
 router.post('/article/save', (req, res) => {
     const { title, body, published, category } = req.body;
-
     if (published === 'on') {
         publiushed = true;
     } else {
         publiushed = false;
-    }
-
-    if (!title) {
-        return res.redirect(`/admin/articles/new?msgError=${encodeURIComponent('The Title field must not be blank')}`);
-    }
-    if (!body) {
-        return res.redirect(`/admin/articles/new?msgError=${encodeURIComponent('The Body field must be filled')}`);
-    }
-    if (!category) {
-        return res.redirect(`/admin/articles/new?msgError=${encodeURIComponent('The Category field must be selected')}`);
     }
     Article.create({
         title: title,
@@ -45,8 +39,18 @@ router.post('/article/save', (req, res) => {
         published: publiushed,
         categoryId: category
     }).then(() => {
-        res.redirect('/admin/articles');
+        res.redirect('/admin/articles/0');
     }).catch(e => {
+        if (e.name === 'SequelizeValidationError' || e.name === 'SequelizeUniqueConstraintError') {
+            const errors = e.errors.map( x => ({
+                //field: x.path,
+                //rule: x.validatorKey,
+                message: x.message
+            }));
+            const msgError = { errors, formData: { title, body, published, category }}
+            const state = encodeURIComponent(JSON.stringify(msgError))
+            return res.redirect(`/admin/articles/new?state=${state}`)
+        }
         console.error('Error ->', e);
         res.redirect(`/error?msgError=${encodeURIComponent('Error saving Article')}`);
     });
@@ -60,11 +64,10 @@ router.get('/admin/articles/:num', (req, res) => {
     } else {
         offset = parseInt(num) * 20;
     }
-    
     Article.findAndCountAll({
         limit: 20,
         offset: offset,
-        order: [['id', 'DESC']],
+        order: [['updatedAt', 'DESC']],
         include: [{
             model: Category, as: 'category',
             required: true,
@@ -103,7 +106,7 @@ router.get('/admin/articles/delete/:id', (req, res) => {
 router.post('/article/delete', (req, res) => {
     const { id } = req.body;
     Article.destroy({ where: { id: id } }).then(() => {
-        res.redirect('/admin/articles');
+        res.redirect('/admin/articles/0');
     }).catch(e => {
         console.error('Error deleting article:', e);
         res.redirect(`/error?msgError=${encodeURIComponent('Error deleting article')}`);
@@ -112,24 +115,20 @@ router.post('/article/delete', (req, res) => {
 
 router.get('/admin/articles/edit/:id', (req, res) => {
     const { id } = req.params;
+    let errors = [];
+    if (req.query.state) {
+        const {errors: e = [] } = JSON.parse(req.query.state);
+        errors = e;
+    }
     Article.findOne({
         where: { id: id }
     }).then(article => {
         Category.findAll({}).then(categories => {
-            if (!article) {
-                return res.redirect(`/error?msgError=${encodeURIComponent('Article not found')}`);
-            }
-            if (!categories) {
-                return res.redirect(`/error?msgError=${encodeURIComponent('Category not found')}`);
-            }
-            if (id != article.id) {
-            return res.redirect(`/error?msgError=${encodeURIComponent('Error finding Article data')}`);
-        }
             res.render('admin/articles/edit', {
                 page_title: 'Edit Article',
                 article: article,
                 categories: categories,
-                msgError: req.query.msgError
+                errors
             });
         }).catch(e => {
             console.error('Error fetching categories for edit:', e);
@@ -143,21 +142,10 @@ router.get('/admin/articles/edit/:id', (req, res) => {
 
 router.post('/article/edit', (req, res) => {
     let { id, title, body, published, categoryId } = req.body;
-    
     if (published === 'on') {
         published = true;
     } else {
         published = false;
-    }
-
-    if (!title) {
-        return res.redirect(`/admin/articles/edit/${id}?msgError=${encodeURIComponent('The Title field must not be blank')}`);
-    }
-    if (!body) {
-        return res.redirect(`/admin/articles/edit/${id}?msgError=${encodeURIComponent('The Body field must be filled')}`);
-    }
-    if (!categoryId) {
-        return res.redirect(`/admin/articles/edit/${id}?msgError=${encodeURIComponent('The Category field must be selected')}`);
     }
     Article.update({
         title: title,
@@ -170,9 +158,18 @@ router.post('/article/edit', (req, res) => {
     }, {
         where: { id: id }
     }).then(() => {
-        
-        res.redirect('/admin/articles');
+        res.redirect('/admin/articles/0');
     }).catch(e => {
+        if (e.name === 'SequelizeValidationError' || e.name === 'SequelizeUniqueConstraintError') {
+            const errors = e.errors.map(x => ({
+                //field: x.path,
+                //rule: x.validatorKey,
+                message: x.message
+            }));
+            const msgError = { errors, formData: { title, body, published, categoryId }};
+            const state = encodeURIComponent(JSON.stringify(msgError));
+            return res.redirect(`/admin/articles/edit/${id}?state=${state}`)
+        }
         console.error('Error saving article:', e);
         res.redirect(`/error?msgError=${encodeURIComponent('Error saving article')}`);
     });

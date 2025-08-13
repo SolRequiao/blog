@@ -1,20 +1,42 @@
-const Sequelize = require('sequelize');
+const { DataTypes, Sequelize } = require('sequelize');
 const conn  = require('../database/database.js');
 const Category = require('../categories/Category.js');
 
 const Article = conn.define('articles', {
     title: {
-        type: Sequelize.STRING,
-        allowNull: false
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+            isAtLeastThree(value) {
+                if (value.length < 2) {
+                    throw new Error('The Title must have at least 2 characters');
+                }
+            },
+            upToTwoHundred(value) {
+                if (value.length > 200) {
+                    throw new Error('The Title must have at most 200 characters')
+                }
+            }
+        }
     }, slug: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
         allowNull: false
     }, body: {
-        type: Sequelize.TEXT,
-        allowNull: false
-    }, published: {
-        type: Sequelize.BOOLEAN,
+        type: DataTypes.TEXT,
         allowNull: false,
+        validate: {
+            notEmpty: {msg: 'The Article Body field must be filled'}
+        }
+    }, published: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+    },
+    categoryId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        validate: {
+            notEmpty: {msg: 'The Category field must be selected'}
+        }
     }
 });
 

@@ -8,9 +8,8 @@
                         <h2>Category Registration</h2>
                         <% if(errors) {%>
                             <% errors.forEach(e=> { %>
-                                <div class="alert alert-danger"><strong>
-                                        <%= e.field %>
-                                    </strong>: <%= e.message %>
+                                <div class="alert alert-danger">
+                                    <%= e.message %>
                                 </div>
                                 <% })} %>
                     </div>

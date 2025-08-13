@@ -6,9 +6,15 @@ const Category = conn.define('categories', {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
-            len: {
-                args: [2, 200],
-                msg: 'The title must be between 2 and 200 characters'
+            isAtLeastThree(value) {
+                if (value.length < 2) {
+                    throw new Error('The Title must have at least 2 characters');
+                }
+            },
+            upToTwoHundred(value) {
+                if (value.length > 200) {
+                    throw new Error('The Title must have at most 200 characters')
+                }
             }
         }
     }, slug: {

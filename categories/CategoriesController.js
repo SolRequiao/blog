@@ -28,7 +28,7 @@ router.get('/admin/categories/:num', (req, res) => {
     Category.findAndCountAll({
         limit: 20,
         offset: offset,
-        order: [['id', 'DESC']]
+        order: [['updatedAt', 'DESC']]
     }).then(categories => {
         let next = true ? offset + 20 < categories.count : false;
         res.render('admin/categories',
@@ -56,8 +56,8 @@ router.post('/category/save', (req, res) => {
     .catch(e => {
         if (e.name === 'SequelizeValidationError' || e.name === 'SequelizeUniqueConstraintError') {
             const errors = e.errors.map(x => ({
-                field: x.path,
-                rule: x.validatorKey,
+                //field: x.path,
+                //rule: x.validatorKey,
                 message: x.message
             }));
             const msgError = { errors, formData: { title } };
@@ -152,8 +152,8 @@ router.post('/category/edit', (req, res) => {
     }).catch(e => {
         if (e.name === 'SequelizeValidationError' || e.name === 'SequelizeUniqueConstraintError') {
         const errors = e.errors.map(x => ({
-            field: x.path,
-            rule: x.validatorKey,
+            //field: x.path,
+            //rule: x.validatorKey,
             message: x.message
         }));
         const msgError = { errors, formData: { title, id } };

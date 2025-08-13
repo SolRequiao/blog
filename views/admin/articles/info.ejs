@@ -5,16 +5,23 @@
     <div class="container mt-5 mb-5">
         <h1>Details: </h1>
         <div class="card">
-            <div class="card-header">
-                <h2 class="card-title text-center">Title: <ins><%= article.title %></ins></h2>
-            </div>
             <% if (article.published) { %>
-            <div class="card-body">
-                <p><%- article.body %></p>
-            </div>
+            <div class="container mt-2 mb-2">
+                    <div class="row row-cols-2">
+                        <div class="col">ID:</div>
+                        <div class="col"><%= article.id %></div>
+                        <div class="col">Title:</div>
+                        <div class="col"><%= article.title %></div>
+                        <div class="col">Slug:</div>
+                        <div class="col"><%= article.slug %></div>
+                        <div class="col">Created At:</div>
+                        <div class="col"><%= article.createdAt.toLocaleDateString() %></div>
+                        <div class="col">Updated At:</div>
+                        <div class="col"><%= article.updatedAt.toLocaleDateString() %></div>
+                    </div>
+                </div>
             <div class="card-footer">
-                <p class="text-muted">Published on: <%= article.updatedAt.toLocaleDateString() %></p>
-                <a href="/admin/articles/" class="btn btn-secondary">Back</a>
+                <a href="/admin/articles/0" class="btn btn-secondary">Back</a>
                 <a href="/admin/articles/edit/<%= article.id %>" class="btn btn-warning">Edit</a>
                 <a href="/admin/articles/delete/<%= article.id %>" class="btn btn-danger">Delete</a>
             </div>
@@ -23,7 +30,7 @@
                     <h4>This article is not published yet.</h4>
                 </div>
                 <div class="card-footer">
-                    <a href="/admin/articles/" class="btn btn-secondary">Back</a>
+                    <a href="/admin/articles/0" class="btn btn-secondary">Back</a>
                 </div>
             <% } %>
             

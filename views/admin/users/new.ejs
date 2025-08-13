@@ -8,13 +8,13 @@
         <div class="card">
             <div class="card-header text-center">
                 <h2>User Registration</h2>
-                <% if (msgError) { %>
-                    <div class="alert alert-danger" role="alert">
-                        <p>
-                            <%= msgError %>
-                        </p>
-                    </div>
-                    <% } %>
+                <% if(errors) {%>
+                    <% errors.forEach(e=> { %>
+                        <div class="alert alert-danger">
+                            <%= e.message %>
+                        </div>
+                    <% })} %>
+                
             </div>
             <div class="card-body">
                 <form action="/user/save" method="post" class="form-control">
@@ -38,7 +38,7 @@
                             placeholder="Insert password here!">
                     </div>
                     <button type="submit" class="btn btn-success">Send</button>
-                    <a href="/" class="btn btn-secondary">Cancel</a>
+                    <a href="/admin/users/0" class="btn btn-secondary">Cancel</a>
                 </form>
             </div>
         </div>

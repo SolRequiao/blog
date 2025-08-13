@@ -6,25 +6,16 @@
                 <div class="card">
                     <div class="card-header text-center">
                         <h2>Article Registration</h2>
-                        <% if (msgError) { %>
-                            <div class="alert alert-danger" role="alert">
-                                <p>
-                                    <%= msgError %>
-                                </p>
-                            </div>
-                            <% } %>
+                        <% if(errors) {%>
+                            <% errors.forEach(e=> { %>
+                                <div class="alert alert-danger">
+                                    <%= e.message %>
+                                </div>
+                                <% })} %>
                     </div>
                     <div class="card-body">
                                 <form action="/article/save" method="post" class="form-control">
-                                    <div>
-                                        <label for="" class="form-label">Category</label>
-                                        <select name="category" class="form-control">
-                                            <option value="">Select the Category</option>
-                                            <% categories.forEach(category => { %>
-                                                <option value="<%= category.id %>"><%= category.title %></option>
-                                            <% }); %>
-                                        </select>
-                                    </div>
+                                    
                                     <div class="mb-3">
                                         <label for="" class="form-label">Article Title</label>
                                         <input type="text" name="title" class="form-control"
@@ -35,11 +26,20 @@
                                         <textarea class="form-control" name="body" placeholder="Insert Article Body here!" id="article"></textarea>
                                     </div>
                                     <div class="mb-3">
+                                        <label for="" class="form-label">Category</label>
+                                        <select name="category" class="form-control">
+                                            <option value="">Select the Category</option>
+                                            <% categories.forEach(category => { %>
+                                                <option value="<%= category.id %>"><%= category.title %></option>
+                                            <% }); %>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
                                         <input type="checkbox" class="form-check-input" name="published">
                                         <label class="form-check-label" for="exampleCheck1">Check me out</label>
                                     </div>
                                     <button type="submit" class="btn btn-success">Send</button>
-                                    <a href="/" class="btn btn-secondary">Cancel</a>
+                                    <a href="/admin/articles/0" class="btn btn-secondary">Cancel</a>
                                 </form>
                     </div>
                 </div>
