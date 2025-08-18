@@ -5,6 +5,8 @@ const app = express();
 const port = process.env.PORT;
 const conn = require('./database/database.js');
 const bodyParser = require('body-parser');
+const session = require('express-session');
+const adminAuth = require('./middlewares/adminAuth');
 
 
 //contorller imports
@@ -16,6 +18,13 @@ const usersController = require('./user/UserController.js');
 //Model imports
 const Article = require('./articles/Article.js');
 
+// Sessions
+app.use(session({
+    secret: "sessions-secret",
+    cookie:  {
+        maxAge: 7200000
+    }
+}));
 
 conn.authenticate().then(() => {
     console.log('Database conn OK');
@@ -52,24 +61,24 @@ app.get('/', (req, res) => {
         res.render('index', {
             page_title: 'Home',
             articles: articles,
-            msgFail: null
+            msgFail: null,
         });
     }).catch(error => {
         console.error('Error fetching articles:', error);
         res.render('index', {
             page_title: 'Home',
-            msgFail: 'Articles not avlailable at the moment.'
+            msgFail: 'Articles not avlailable at the moment.',
         });
     });
 });
 
 app.use('/', usersController)
 
-app.use('/', categoriesController);
-
-app.use('/', articlesController);
-
 app.use('/', moreController);
+
+app.use('/', adminAuth, categoriesController);
+
+app.use('/', adminAuth, articlesController);
 
 
 app.listen(port, () => {

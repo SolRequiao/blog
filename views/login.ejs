@@ -1,0 +1,33 @@
+<%- include('partials/head.ejs')  %>
+<%- include('partials/homenavbar.ejs')  %>
+
+<body>
+    <div class="container mt-5">
+        <h1>Login</h1>
+        <% if(errors) {%>
+                    <% errors.forEach(e=> { %>
+                        <div class="alert alert-danger">
+                            <%= e.message %>
+                        </div>
+                    <% })} %>
+                
+            </div>
+    </div>                
+    <div class="container mt-3">
+                <form action="/authenticate" method="post" class="form-control">
+                    <div class="mb-3">
+                        <label for="" class="form-label">E-mail</label>
+                        <input type="email" name="email" class="form-control" placeholder="Enter e-mail here!">
+                    </div>
+                    <div class="mb-3">
+                        <label for="" class="form-label">Password</label>
+                        <input type="password" name="password" class="form-control"
+                            placeholder="Enter password here!">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Login</button>
+                    <a href="/" class="btn btn-secondary">Cancel</a>
+                </form>
+            </div>
+</body>
+
+<%- include('partials/footer.ejs')  %>
