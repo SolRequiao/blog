@@ -7,6 +7,7 @@ const conn = require('./database/database.js');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const adminAuth = require('./middlewares/adminAuth');
+const bcrypt = require('bcryptjs');
 
 
 //contorller imports
@@ -17,11 +18,12 @@ const usersController = require('./user/UserController.js');
 
 //Model imports
 const Article = require('./articles/Article.js');
+const User = require('./user/User.js')
 
 // Sessions
 app.use(session({
     secret: "sessions-secret",
-    cookie:  {
+    cookie: {
         maxAge: 7200000
     }
 }));
@@ -51,12 +53,27 @@ app.get('/error', (req, res) => {
 });
 
 app.get('/', (req, res) => {
-    Article.findAll({
-        order: [['id', 'DESC']],
-        limit: 4,
-        where: {
-            published: true
+    const userName = 'Admin';
+    const email = 'admin@mail.com';
+    const password = 'admin123!@#';
+    const confirmPassword = password;
+    const salt = bcrypt.genSaltSync(10);
+    const hash = bcrypt.hashSync(password, salt);
+    User.findOrCreate({
+        where: { email: email.toLowerCase() },
+        defaults: {
+            username: userName,
+            email: email.toLowerCase(),
+            passwordV: password,
+            confirmPasswordV: confirmPassword,
+            password: hash
         }
+    }).then(() => {
+        return Article.findAll({
+            order: [['id', 'DESC']],
+            limit: 4,
+            where: { published: true }
+        });
     }).then(articles => {
         res.render('index', {
             page_title: 'Home',
@@ -64,13 +81,14 @@ app.get('/', (req, res) => {
             msgFail: null,
         });
     }).catch(error => {
-        console.error('Error fetching articles:', error);
+        console.error('Error fetching data:', error);
         res.render('index', {
             page_title: 'Home',
             msgFail: 'Articles not avlailable at the moment.',
         });
     });
 });
+
 
 app.use('/', usersController)
 
