@@ -51,7 +51,7 @@ docker compose up --build
 In this case, you also have to install **MySQL database** manually on your machine.
 ```bash
 npm install
-node app.js
+node index.js
 ```
 
 ---
