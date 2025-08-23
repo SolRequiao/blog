@@ -56,7 +56,7 @@ node index.js
 
 ---
 
-## 👤 Default Login for Testing
+## Default Login for Testing
 
 When accessing the app for the first time at the route `/`, a default admin user is available for testing the application features.  
 
