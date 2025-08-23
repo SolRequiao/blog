@@ -29,6 +29,14 @@ A blog application built with **Node.js**, **Express**, **EJS** for server-side 
 
 ---
 
+# Run Application
+
+```bash
+cp .env.example .env   # configure environment variables
+```
+
+---
+
 ## Run the containers
 
 ```bash
@@ -42,7 +50,6 @@ docker compose up --build
 
 In this case, you also have to install **MySQL database** manually on your machine.
 ```bash
-cp .env.example .env   # configure environment variables
 npm install
 node app.js
 ```
