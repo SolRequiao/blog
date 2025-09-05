@@ -1,0 +1,51 @@
+<%- include ('../../partials/head.ejs') %>
+<%- include ('../../partials/navbar.ejs') %>
+
+
+
+<body>
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-header text-center">
+                <h2>User Registration</h2>
+                <% if(errors) {%>
+                    <% errors.forEach(e=> { %>
+                        <div class="alert alert-danger">
+                            <%= e.message %>
+                        </div>
+                    <% })} %>
+                
+            </div>
+            <div class="card-body">
+                <form action="/user/save" method="post" class="form-control">
+                    <input type="hidden" name="id" value="<%= user.id %>">
+                    <div class="mb-3">
+                        <label for="" class="form-label">Name</label>
+                        <input type="text" name="userName" class="form-control"
+                            placeholder="Insert user name here!" value="<%= user.username %>">
+                    </div>
+                    <div class="mb-3">
+                        <label for="" class="form-label">E-mail</label>
+                        <input type="email" name="email" class="form-control" placeholder="Insert e-mail here!" value="<%= user.email %>">
+                    </div>
+                    <div class="mb-3">
+                        <label for="" class="form-label">Password</label>
+                        <input type="password" name="password" class="form-control"
+                            placeholder="Insert password here!" value="<%= user.password %>">
+                    </div>
+                    <div class="mb-3">
+                        <label for="" class="form-label">Confirm Password</label>
+                        <input type="password" name="confirmPassword" class="form-control"
+                            placeholder="Insert password here!" value="<%= user.password %>">
+                    </div>
+                    <button type="submit" class="btn btn-success">Send</button>
+                    <a href="/admin/users/0" class="btn btn-secondary">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+
+
+
+        <%- include ('../../partials/footer.ejs') %>

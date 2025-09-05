@@ -40,8 +40,6 @@ router.get('/admin/users/:num', adminAuth, (req, res) => {
     })
 });
 
-
-
 router.post('/user/save', adminAuth, (req, res) => {
     const { userName, email, password, confirmPassword } = req.body;
     const salt = bcrypt.genSaltSync(10)
@@ -127,6 +125,69 @@ router.post('/authenticate', (req, res) => {
 router.get('/logout', (req, res) =>{
     req.session.user = undefined;
     res.redirect('/');
-})
+});
+
+router.get('/admin/user/delete/:id', adminAuth, (req, res) => {
+    const { id } = req.params;
+    User.findOne({
+        where: { id: id }
+    }).then(user => {
+        if (!user) {
+            return res.redirect(`/error?msgError=${encodeURIComponent('User not found')}`);
+        }
+        res.render('admin/users/delete', {
+            page_title: 'Delete User',
+            user
+        });
+    }).catch(e => {
+        console.error('Error fetching user info:', e);
+        return res.redirect(`/error?msgError=${encodeURIComponent('Internal error fetching user info')}`);
+    });
+});
+
+router.get('/admin/user/edit/:id', adminAuth, (req, res) => {
+    const { id } = req.params;
+    let errors = [];
+    User.findOne({
+        where: {
+            id: id
+        }
+    }).then((user) => {
+        if (id != user.id) {
+            return res.redirect(`/error?msgError=${encodeURIComponent('Error finding User data')}`);
+        }
+        if (req.query.state) {
+            const { errors: e = [] } = JSON.parse(req.query.state);
+            errors = e;
+        }
+        res.render('admin/users/edit',
+            {
+                page_title: 'Edit User',
+                user: user,
+                errors
+            });
+    }).catch(e => {
+        console.error('Error finding User data:', e);
+        res.redirect(`/error?msgError=${encodeURIComponent('Error finding User data')}`)
+    });
+});
+
+router.get('/admin/user/info/:id', adminAuth, (req, res) => {
+    const { id } = req.params;
+    User.findOne({
+        where: { id: id }
+    }).then(user => {
+        if (!user) {
+            return res.redirect(`/error?msgError=${encodeURIComponent('User not found')}`);
+        }
+        res.render('admin/users/info', {
+            page_title: 'User Info',
+            user
+        });
+    }).catch(e => {
+        console.error('Error fetching user info:', e);
+        return res.redirect(`/error?msgError=${encodeURIComponent('Internal error fetching user info')}`);
+    });
+});
 
 module.exports = router;

@@ -1,0 +1,30 @@
+<%- include ('../../partials/head.ejs') %>
+<%- include ('../../partials/navbar.ejs') %>
+
+<body>
+    <div class="container mt-5 mb-5">
+        <h1>Details: </h1>
+        <div class="card">
+            <div class="container mt-2 mb-2">
+                    <div class="row row-cols-2">
+                        <div class="col">ID:</div>
+                        <div class="col"><%= user.id %></div>
+                        <div class="col">Name:</div>
+                        <div class="col"><%= user.username %></div>
+                        <div class="col">Email:</div>
+                        <div class="col"><%= user.email %></div>
+                        <div class="col">Created At:</div>
+                        <div class="col"><%= user.createdAt.toLocaleDateString() %></div>
+                        <div class="col">Updated At:</div>
+                        <div class="col"><%= user.updatedAt.toLocaleDateString() %></div>
+                    </div>
+                </div>
+            <div class="card-footer">
+                <a href="/admin/users/0" class="btn btn-secondary">Back</a>
+                <a href="/admin/user/edit/<%= user.id %>" class="btn btn-warning">Edit</a>
+                <a href="/admin/user/delete/<%= user.id %>" class="btn btn-danger">Delete</a>
+            </div>            
+        </div>
+</body>
+
+<%- include ('../../partials/footer.ejs') %>
