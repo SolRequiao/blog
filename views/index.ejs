@@ -7,8 +7,8 @@
                 <%if(!msgFail) { %>
                 </div>
                 <div class="container mt-5">
-                <div class="row g-4">
-                    <% articles.forEach(article=> { %>
+                    <div class="row g-4">
+                <% articles.forEach(article=> { %>
                         <div class="col-12 col-sm-6 col-md-3">
                             <div class="card h-100">
                                 <div class="card-body">
@@ -31,10 +31,10 @@
                                 </div>
                             </div>
                         </div>
+                        <% }); %>
                     </div>
                     <a href="/more/articles/0" class="btn btn-info mt-4">More Articles</a>
-                        <% }); %>
-            </div>
+                </div>
             <% } else { %>
             <div class="container text-center mt-5">
                 <p>
